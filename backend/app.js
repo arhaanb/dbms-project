@@ -421,7 +421,7 @@ app.get('/admin/getorder', (req, res) => {
 	const { o } = req.query
 
 	connection.query(
-		`SELECT op.*, o.*, da.name as daname, o.order_status as status, p.name AS product_name, p.price AS product_price FROM order_products op JOIN orders o ON op.order_id = o.order_id JOIN product p ON op.product_id = p.product_id JOIN delivery_agent da  ON o.delivery_agent_id = da.id WHERE op.order_id = ${o};`,
+		`SELECT op.*, o.*, c.name as c_name, da.name as daname, o.order_status as status, p.name AS product_name, p.price AS product_price FROM order_products op JOIN orders o ON op.order_id = o.order_id JOIN product p ON op.product_id = p.product_id JOIN delivery_agent da ON o.delivery_agent_id = da.id JOIN customer c ON o.customer_id = c.customer_id WHERE op.order_id = ${o};`,
 		// 'SELECT o.*, c.name, c.email, c.phone, p.name as product_name, o.metadata as delivery FROM orders o INNER JOIN customer c ON o.customer_id = c.customer_id INNER JOIN product p ON o.product_id = p.product_id;',
 		// "SELECT o.*, c.name, c.email, c.phone, o.metadata as delivery FROM orders o INNER JOIN customer c ON o.customer_id = c.customer_id INNER JOIN product p ON o.product_id = p.product_id; ",
 		function (err, rows) {

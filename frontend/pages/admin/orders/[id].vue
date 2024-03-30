@@ -3,6 +3,9 @@
 		<br /><br /><br />
 		<div v-if="res" class="row">
 			<div class="six columns">
+				<h6 class="zero strong">Name</h6>
+				<h6 class="">{{ res[0]?.c_name }}</h6>
+
 				<h6 class="zero strong">Address</h6>
 				<h6 class="">{{ res[0]?.address }}</h6>
 
