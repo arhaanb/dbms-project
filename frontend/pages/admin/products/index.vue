@@ -38,13 +38,12 @@
 
 <script>
 import axios from 'axios'
-import { useStorage } from '@vueuse/core'
+import { getStorage } from '~/local.js'
 
 export default {
 	data() {
 		return {
-			res: null,
-			user: useStorage('user')
+			res: null
 		}
 	},
 	mounted() {
@@ -56,6 +55,12 @@ export default {
 			.catch((error) => {
 				console.error('Error fetching data:', error)
 			})
+	},
+	created() {
+		if (getStorage('user') && JSON.parse(getStorage('user'))?.type == 'admin') {
+		} else {
+			navigateTo('/')
+		}
 	}
 }
 </script>

@@ -6,6 +6,7 @@
 			</nuxt-link>
 
 			<div class="right">
+				<nuxt-link v-if="user?.isAdmin == 1" to="/admin">Admin</nuxt-link>
 				<nuxt-link v-if="user" to="/wallet">Wallet</nuxt-link>
 				<nuxt-link v-if="user" to="/cart">Cart</nuxt-link>
 				<a v-if="user" href="/logout">

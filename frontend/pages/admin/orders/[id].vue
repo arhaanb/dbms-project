@@ -17,7 +17,8 @@
 
 				<h6 class="zero strong">Products</h6>
 				<h6 class="zero" v-for="r in res" :key="r.product_id">
-					{{ r?.quantity }} {{ r?.product_name }} &mdash; Rs. {{ r?.total_price }}
+					{{ r?.quantity }} {{ r?.product_name }} &mdash; Rs.
+					{{ r?.total_price }}
 				</h6>
 			</div>
 
@@ -42,8 +43,8 @@
 import axios from 'axios'
 const route = useRoute()
 import { addtocart } from '../../func'
-import { getStorage } from '../../local'
 import { toast } from 'vue3-toastify'
+import { getStorage } from '~/local.js'
 
 export default {
 	data() {
@@ -92,6 +93,12 @@ export default {
 				.catch((error) => {
 					console.error('Error fetching data:', error)
 				})
+		}
+	},
+	created() {
+		if (getStorage('user') && JSON.parse(getStorage('user'))?.type == 'admin') {
+		} else {
+			navigateTo('/')
 		}
 	}
 }

@@ -48,7 +48,7 @@
 
 <script>
 import axios from 'axios'
-import { useStorage } from '@vueuse/core'
+import { getStorage } from '~/local.js'
 import { toast } from 'vue3-toastify'
 import VueSelect from 'vue3-select-component'
 import 'vue3-select-component/dist/style.css'
@@ -60,7 +60,6 @@ export default {
 	data() {
 		return {
 			res: null,
-			user: useStorage('user'),
 			s: null,
 			f: {
 				name: null,
@@ -71,7 +70,7 @@ export default {
 				quantity: null,
 				metadata: null
 			},
-      dup: null
+			dup: null
 		}
 	},
 	methods: {
@@ -106,6 +105,12 @@ export default {
 			.catch((error) => {
 				console.error('Error fetching data:', error)
 			})
+	},
+	created() {
+		if (getStorage('user') && JSON.parse(getStorage('user'))?.type == 'admin') {
+		} else {
+			navigateTo('/')
+		}
 	}
 }
 </script>

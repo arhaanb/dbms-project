@@ -86,33 +86,32 @@ app.post('/login', (req, res) => {
 				const user = adminRows[0]
 
 				if (user.password == p) {
-					connection.query(
-						`UPDATE customer SET log_count = 0, blocked = 0 WHERE username = '${u}';`,
-						function (err, adminRows) {
-							if (err) {
-								console.log(err)
-								return res.status(500).json({ error: err.sqlMessage })
+					if (user.log_count > 3) {
+						return res.status(500).json({
+							error: 'Your account has been blocked. Please contact an admin.'
+						})
+					} else {
+						connection.query(
+							`UPDATE customer SET log_count = 0, blocked = 0 WHERE username = '${u}';`,
+							function (err, adminRows) {
+								if (err) {
+									console.log(err)
+									return res.status(500).json({ error: err.sqlMessage })
+								}
+
+								return res.json({
+									user: user,
+									type: user.isAdmin ? 'admin' : 'customer'
+								})
 							}
-							return res.json({
-								user: user,
-								type: user.isAdmin ? 'admin' : 'customer'
-							})
-						}
-					)
+						)
+					}
 				} else {
 					connection.query(
 						`UPDATE customer SET log_count = log_count + 1 WHERE username = '${u}';`,
 						function (err, adminRows) {
-							// if (user.log_count == 2) {
-							// 	connection.query(
-							// 		`UPDATE customer SET log_count = 9 WHERE username = '${u}';`
-							// 	)
-							// }
 							if (err) {
 								console.log(err)
-								// connection.query(
-								// 	`UPDATE customer SET blocked = 1 WHERE username = '${u}';`
-								// )
 								return res.status(500).json({ error: err.sqlMessage })
 							} else if (user.log_count < 3) {
 								return res.status(500).json({
@@ -130,7 +129,7 @@ app.post('/login', (req, res) => {
 					)
 				}
 			} else {
-				res.status(500).json({ error: 'User not found' })
+				return res.status(500).json({ error: 'User not found' })
 			}
 		}
 	)
@@ -381,11 +380,14 @@ app.get('/search', (req, res) => {
 //admin routes
 
 app.get('/admin/customers', (req, res) => {
-	connection.query('select customer_id as id, name, email, phone, address from customer;', function (err, rows) {
-		if (err) throw err
+	connection.query(
+		'select customer_id as id, name, email, phone, address from customer;',
+		function (err, rows) {
+			if (err) throw err
 
-		res.json(rows)
-	})
+			res.json(rows)
+		}
+	)
 })
 
 app.get('/admin/orders', (req, res) => {
