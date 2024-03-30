@@ -53,6 +53,6 @@ export default defineNuxtConfig({
 		}
 	},
 	devtools: { enabled: true },
-	modules: ['radix-vue/nuxt'],
+	modules: [],
 	css: ['~/assets/skeleton.css', '~/assets/main.css']
 })

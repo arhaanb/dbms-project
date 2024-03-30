@@ -24,7 +24,7 @@
 
 <script>
 import axios from 'axios'
-import {getStorage} from '../local'
+import { getStorage } from '../local'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
 import { addtocart } from '../func'
@@ -45,7 +45,6 @@ export default {
 			})
 		},
 		add(name, p_id) {
-			// console.log(this.user.customer_id)
 			addtocart(this.user.customer_id, 1, p_id)
 			this.showt(name)
 		}

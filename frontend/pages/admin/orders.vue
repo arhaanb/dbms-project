@@ -2,6 +2,8 @@
 	<main class="container">
 		<h1>Orders</h1>
 
+		<!-- {{ res }} -->
+
 		<p v-for="o in res" :key="o.order_id">
 			{{ o }}
 		</p>

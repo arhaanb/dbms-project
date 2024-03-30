@@ -54,7 +54,7 @@ app.post('/login', (req, res) => {
 		function (err, adminRows) {
 			if (err) {
 				console.log(err)
-				res.status(500).json({ error: err })
+				res.status(500).json({ error: err.sqlMessage })
 			}
 
 			if (adminRows.length > 0) {
@@ -124,11 +124,25 @@ app.get('/addtocart', (req, res) => {
 	)
 })
 
+app.get('/removefromcart', (req, res) => {
+	const { c_id, p_id } = req?.query
+
+	connection.query(
+		`DELETE FROM cart_items WHERE cart_id = (SELECT cart_id FROM cart WHERE customer_id = ${c_id}) AND product_id = ${p_id};`,
+		function (err, adminRows) {
+			if (err) throw err
+
+			res.json({ hi: 'yo' })
+		}
+	)
+})
+
 app.get('/cart', (req, res) => {
 	const { c } = req?.query
 
 	connection.query(
-		`SELECT p.name, p.metadata, ci.product_id, SUM(ci.quantity) AS total_quantity FROM cart c JOIN cart_items ci ON c.cart_id = ci.cart_id JOIN product p ON ci.product_id = p.product_id WHERE c.customer_id = ${c} GROUP BY ci.product_id;`,
+		`SELECT p.name, p.metadata, p.price, ci.product_id, SUM(ci.quantity) AS total_quantity, p.price * SUM(ci.quantity) as total_price FROM cart c JOIN cart_items ci ON c.cart_id = ci.cart_id JOIN product p ON ci.product_id = p.product_id WHERE c.customer_id = ${c} GROUP BY ci.product_id;`,
+		// `SELECT p.name, p.metadata, ci.product_id, SUM(ci.quantity) AS total_quantity FROM cart c JOIN cart_items ci ON c.cart_id = ci.cart_id JOIN product p ON ci.product_id = p.product_id WHERE c.customer_id = ${c} GROUP BY ci.product_id;`,
 		function (err, adminRows) {
 			if (err) throw err
 
@@ -141,24 +155,87 @@ app.get('/cart', (req, res) => {
 	)
 })
 
-app.get('/order', (req, res) => {
-	const { c } = req?.query
-
+app.get('/test', (req, res) => {
 	connection.query(
-		`SELECT p.name, p.metadata, p.price, ci.product_id, SUM(ci.quantity) AS total_quantity, p.price * SUM(ci.quantity) as total_price FROM cart c JOIN cart_items ci ON c.cart_id = ci.cart_id JOIN product p ON ci.product_id = p.product_id WHERE c.customer_id = ${c} GROUP BY ci.product_id;`,
-		function (err, adminRows) {
-			if (err) throw err
-
-			var sum = 0.0
-			adminRows.forEach((e) => {
-				sum += parseFloat(e.total_price)
-			})
-
-			if (adminRows.length > 0) {
-				res.json({ cart: adminRows, total: sum })
-			} else {
-				res.status(404).json({ error: 'Cart not found' })
+		`(SELECT COALESCE((SELECT id FROM delivery_agent WHERE availability = 1 LIMIT 1), 0) AS id);`,
+		function (err, stuff) {
+			if (err) {
+				console.log(err)
+				return res.status(500).json({ error: err.sqlMessage })
 			}
+
+			return res.json({ stuff: stuff[0].id })
+		}
+	)
+})
+
+app.post('/order', (req, res) => {
+	const { cart, details } = req?.body
+
+	console.log(cart)
+	connection.query(
+		`update wallet set balance = balance - ${details.total_price} where customer_id = ${details.customer_id};`,
+		function (err, adminRows) {
+			if (err) {
+				console.log(err)
+				return res.status(500).json({ error: err.sqlMessage })
+			}
+
+			connection.query(
+				`(SELECT COALESCE((SELECT id FROM delivery_agent WHERE availability = 1 LIMIT 1), 0) AS id);`,
+				function (err, stuff) {
+					if (err) {
+						console.log(err)
+						return res.status(500).json({ error: err.sqlMessage })
+					}
+
+					var del_id = stuff[0].id
+
+					connection.query(
+						`INSERT INTO orders (customer_id, address, delivery_agent_id, metadata, order_status, total_price) VALUES (${details.customer_id}, '${details.address}', ${del_id}, '${details.shipping}', 'in transit', ${details.total_price});`,
+						function (err, adminRows) {
+							if (err) throw err
+
+							var hoo = []
+							cart.forEach((i) => {
+								hoo.push(
+									`((select order_id from orders ORDER BY order_id DESC LIMIT 1), ${i.product_id}, ${i.total_quantity})`
+								)
+							})
+
+							connection.query(
+								`insert into order_products values ${hoo.join(', ')};`,
+								function (err, stuff) {
+									if (err) {
+										console.log(err)
+
+										connection.query(
+											`DELETE FROM orders WHERE order_id = (SELECT * FROM (SELECT order_id FROM orders ORDER BY order_id DESC LIMIT 1) AS subquery);`
+										)
+
+										return res.status(500).json({ error: err.sqlMessage })
+									}
+
+									cart.forEach((i) => {
+										connection.query(
+											`update product set quantity = quantity - ${i.total_quantity} where product_id = ${i.product_id}`
+										)
+									})
+
+									connection.query(
+										`delete from cart_items where cart_id = (select cart_id from cart where customer_id = ${details.customer_id});`
+									)
+
+									return res.json({
+										cart,
+										details
+									})
+								}
+							)
+						}
+					)
+				}
+			)
 		}
 	)
 })
@@ -288,7 +365,8 @@ app.get('/admin/customers', (req, res) => {
 
 app.get('/admin/orders', (req, res) => {
 	connection.query(
-		'SELECT o.*, c.name, c.email, c.phone, p.name as product_name, o.metadata as delivery FROM orders o INNER JOIN customer c ON o.customer_id = c.customer_id INNER JOIN product p ON o.product_id = p.product_id;',
+		`select * from orders;`,
+		// 'SELECT o.*, c.name, c.email, c.phone, p.name as product_name, o.metadata as delivery FROM orders o INNER JOIN customer c ON o.customer_id = c.customer_id INNER JOIN product p ON o.product_id = p.product_id;',
 		// "SELECT o.*, c.name, c.email, c.phone, o.metadata as delivery FROM orders o INNER JOIN customer c ON o.customer_id = c.customer_id INNER JOIN product p ON o.product_id = p.product_id; ",
 		function (err, rows) {
 			if (err) throw err
