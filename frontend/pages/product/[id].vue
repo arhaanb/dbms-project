@@ -1,23 +1,30 @@
 <template>
-	<main>
-		<h6>{{ res?.name }}</h6>
-		<h6>Rs. {{ res?.price }}</h6>
+	<main class="container">
+		<br /><br /><br />
+		<div class="row">
+			<div class="six columns">
+				<img :src="res?.img" alt="" />
+				<h1 class="zero">{{ res?.name }}</h1>
+				<h5>{{ res?.description }}</h5>
+				<h6>Rs. {{ res?.price }}/piece</h6>
+			</div>
 
-		<form @submit.prevent="add(res?.name, res?.product_id)">
-			<label for="quantity"></label>
-			<input
-				id="quantity"
-				type="number"
-				min="1"
-				:max="res?.quantity || null"
-				placeholder="Choose quantity"
-				v-model="quantity"
-			/>
-			<button type="submit">Add to cart</button>
-		</form>
-
-		{{ user }}
-		{{ res }}
+			<div class="six columns">
+				<br /><br /><br />
+				<form @submit.prevent="add(res?.name, res?.product_id)">
+					<label for="quantity">Quantity</label>
+					<input
+						id="quantity"
+						type="number"
+						min="1"
+						placeholder="Choose quantity"
+						v-model="quantity"
+					/>
+					<!-- :max="res?.quantity || null" -->
+					<button type="submit">Add to Cart</button>
+				</form>
+			</div>
+		</div>
 	</main>
 </template>
 

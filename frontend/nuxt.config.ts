@@ -54,5 +54,5 @@ export default defineNuxtConfig({
 	},
 	devtools: { enabled: true },
 	modules: [],
-	css: ['~/assets/skeleton.css', '~/assets/main.css']
+	css: ['~/assets/skeleton.css', '~/assets/main.scss']
 })

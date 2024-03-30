@@ -1,24 +1,33 @@
 <template>
 	<main class="container">
-		<h1>Customers</h1>
+		<div class="flex">
+			<h1>Products</h1>
+			<nuxt-link to="/admin/products/add">
+				<button>Add a Product</button>
+			</nuxt-link>
+		</div>
 
 		<table v-if="res">
 			<thead>
 				<tr>
 					<th>ID</th>
 					<th>Name</th>
-					<th>Address</th>
-					<th>Email</th>
-					<th>Phone</th>
+					<th>Supplier</th>
+					<th>Price</th>
+					<th>Description</th>
+					<th>Quantity</th>
+					<th>Metadata</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr v-for="i in res" :key="i">
-					<td>{{ i.id }}</td>
+					<td>{{ i.product_id }}</td>
 					<td>{{ i.name }}</td>
-					<td>{{ i.address }}</td>
-					<td>{{ i.email }}</td>
-					<td>{{ i.phone }}</td>
+					<td>{{ i.supplier_id }}</td>
+					<td>{{ i.price }}</td>
+					<td>{{ i.description }}</td>
+					<td>{{ i.quantity }}</td>
+					<td>{{ i.metadata }}</td>
 				</tr>
 			</tbody>
 		</table>
@@ -40,7 +49,7 @@ export default {
 	},
 	mounted() {
 		axios
-			.get('http://localhost:8000/admin/customers')
+			.get('http://localhost:8000/home')
 			.then((response) => {
 				this.res = response.data
 			})
@@ -51,7 +60,23 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.flex {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.center {
+	text-align: center;
+}
+
+.grid {
+	display: grid;
+	grid-gap: 3em;
+	grid-template-columns: repeat(3, 1fr);
+}
+
 table {
 	width: 100%;
 	border-collapse: collapse;

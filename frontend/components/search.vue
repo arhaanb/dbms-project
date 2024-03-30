@@ -28,3 +28,16 @@ export default {
 	}
 }
 </script>
+
+<style lang="scss" scoped>
+form {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1em;
+	margin-top: 1em;
+	input, button {
+		margin: 0;
+	}
+}
+</style>

@@ -1,10 +1,8 @@
 <template>
 	<main class="container">
+		<br />
 		<Search />
-
-		{{ user }}
-
-		<h1>Products</h1>
+		<br />
 
 		<section>
 			<div class="grid">
@@ -12,10 +10,10 @@
 					<nuxt-link :to="`/product/${p.product_id}`">
 						<img :src="p.img" :alt="p.name" />
 						<h5 class="zero">{{ p.name }}</h5>
-						<p>{{ p.metadata }}</p>
+						<p>{{ p.description }}</p>
 					</nuxt-link>
 
-					<button @click="add(p.name, p.product_id)">add to cart</button>
+					<button @click="add(p.name, p.product_id)">Add to Cart</button>
 				</div>
 			</div>
 		</section>
@@ -66,10 +64,42 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss">
 .grid {
 	display: grid;
 	grid-gap: 3em;
 	grid-template-columns: repeat(3, 1fr);
+	margin-bottom: 5em;
+}
+
+h1 {
+	font-weight: 700;
+}
+
+.card {
+	background-color: #fafafa;
+	border: 1px solid #eaeaea;
+	padding: 1em;
+	border-radius: 0.5em;
+	a {
+		text-decoration: none;
+		color: #222;
+		h5 {
+			font-weight: 500;
+		}
+	}
+	p {
+		height: 3em; /* Adjust the height as needed for two lines of text */
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-line-clamp: 2; /* number of lines to show */
+		line-clamp: 2;
+		-webkit-box-orient: vertical;
+	}
+	img {
+		object-fit: cover;
+		aspect-ratio: 1.5;
+		border-radius: 0.25em;
+	}
 }
 </style>

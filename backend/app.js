@@ -46,9 +46,34 @@ app.get('/home', (req, res) => {
 	})
 })
 
+app.get('/suppliers', (req, res) => {
+	connection.query('select * from supplier;', function (err, rows) {
+		if (err) throw err
+
+		res.json(rows)
+	})
+})
+
+app.post('/addproduct', (req, res) => {
+	const { name, supplier, description, image, price, quantity, metadata } =
+		req?.body
+
+	connection.query(
+		`insert into product (name, supplier_id, price, description, quantity, metadata, img) values ("${name}", ${supplier}, ${price}, '${description}', ${quantity}, "${metadata}", "${image}");`,
+		function (err, adminRows) {
+			if (err) {
+				console.log(err)
+				return res.status(500).json({ error: err.sqlMessage })
+			}
+
+			return res.json({ hi: 'success' })
+		}
+	)
+})
+
 app.post('/login', (req, res) => {
 	const { u, p } = req?.body
-	// AND c.password = '${p}'
+
 	connection.query(
 		`SELECT c.*, CASE WHEN a.customer_id IS NOT NULL THEN 1 ELSE 0 END AS isAdmin FROM customer c LEFT JOIN admins a ON c.customer_id = a.customer_id WHERE c.username = '${u}';`,
 		function (err, adminRows) {
@@ -356,7 +381,7 @@ app.get('/search', (req, res) => {
 //admin routes
 
 app.get('/admin/customers', (req, res) => {
-	connection.query('select * from customer;', function (err, rows) {
+	connection.query('select customer_id as id, name, email, phone, address from customer;', function (err, rows) {
 		if (err) throw err
 
 		res.json(rows)
@@ -365,7 +390,36 @@ app.get('/admin/customers', (req, res) => {
 
 app.get('/admin/orders', (req, res) => {
 	connection.query(
-		`select * from orders;`,
+		`select o.*, c.name from orders o join customer c where o.customer_id = c.customer_id;`,
+		// 'SELECT o.*, c.name, c.email, c.phone, p.name as product_name, o.metadata as delivery FROM orders o INNER JOIN customer c ON o.customer_id = c.customer_id INNER JOIN product p ON o.product_id = p.product_id;',
+		// "SELECT o.*, c.name, c.email, c.phone, o.metadata as delivery FROM orders o INNER JOIN customer c ON o.customer_id = c.customer_id INNER JOIN product p ON o.product_id = p.product_id; ",
+		function (err, rows) {
+			if (err) throw err
+
+			res.json(rows)
+		}
+	)
+})
+
+app.post('/admin/updatestatus', (req, res) => {
+	const { o } = req.query
+	const { status } = req.body
+
+	connection.query(
+		`update orders set order_status = "${status}" where order_id = ${o};`,
+		function (err, rows) {
+			if (err) throw err
+
+			res.json({ rows: 'bro' })
+		}
+	)
+})
+
+app.get('/admin/getorder', (req, res) => {
+	const { o } = req.query
+
+	connection.query(
+		`SELECT op.*, o.*, da.name as daname, o.order_status as status, p.name AS product_name, p.price AS product_price FROM order_products op JOIN orders o ON op.order_id = o.order_id JOIN product p ON op.product_id = p.product_id JOIN delivery_agent da  ON o.delivery_agent_id = da.id WHERE op.order_id = ${o};`,
 		// 'SELECT o.*, c.name, c.email, c.phone, p.name as product_name, o.metadata as delivery FROM orders o INNER JOIN customer c ON o.customer_id = c.customer_id INNER JOIN product p ON o.product_id = p.product_id;',
 		// "SELECT o.*, c.name, c.email, c.phone, o.metadata as delivery FROM orders o INNER JOIN customer c ON o.customer_id = c.customer_id INNER JOIN product p ON o.product_id = p.product_id; ",
 		function (err, rows) {

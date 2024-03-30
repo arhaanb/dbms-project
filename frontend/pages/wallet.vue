@@ -1,24 +1,27 @@
 <template>
-	<main>
-		<h1>wallet</h1>
+	<main class="container">
+		<br /><br />
+		<h1>Wallet</h1>
 
 		<section>
 			<div class="row">
 				<div class="six columns">
 					<div class="box">
-						<h3>Rs. {{ results?.amt }}</h3>
-						<h5>Current balance</h5>
+						<h5 class="zero">Current balance</h5>
+						<h3 class="strong">Rs. {{ results?.amt }}</h3>
 					</div>
 				</div>
 
 				<div class="six columns">
-					<h5>Add to wallet</h5>
+					<h5 class="strong">Add to wallet</h5>
 					<form @submit.prevent="addtowallet()">
+						<label for="">Enter amount (Rs.)</label>
 						<input
 							v-model="amount"
 							type="number"
 							min="1"
 							placeholder="Enter an amount"
+							required
 						/>
 						<br />
 						<button type="submit">Add to wallet &rarr;</button>
@@ -32,6 +35,7 @@
 <script>
 import axios from 'axios'
 import { saveStorage, getStorage } from '../local.js'
+import { toast } from 'vue3-toastify'
 
 export default {
 	data() {
@@ -52,6 +56,12 @@ export default {
 				.then((res) => {
 					this.results = res.data
 					this.amount = null
+
+					toast(`Money added to wallet!`, {
+						theme: 'auto',
+						type: 'default',
+						position: 'top-center'
+					})
 				})
 				.catch((err) => {
 					console.log(err)

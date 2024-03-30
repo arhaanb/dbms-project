@@ -1,28 +1,37 @@
 <template>
 	<main class="container">
-		<h1>Customers</h1>
+		<h1>Orders</h1>
 
 		<table v-if="res">
 			<thead>
 				<tr>
 					<th>ID</th>
-					<th>Name</th>
+					<th>Customer</th>
 					<th>Address</th>
-					<th>Email</th>
-					<th>Phone</th>
+					<th>Delivery Agent</th>
+					<th>Description</th>
+					<th>Status</th>
+					<th>Delivery</th>
+					<th>Details</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr v-for="i in res" :key="i">
-					<td>{{ i.id }}</td>
+					<td>{{ i.order_id }}</td>
 					<td>{{ i.name }}</td>
 					<td>{{ i.address }}</td>
-					<td>{{ i.email }}</td>
-					<td>{{ i.phone }}</td>
+					<td>{{ i.delivery_agent_id }}</td>
+					<td>{{ i.delivery_agent_id }}</td>
+					<td>{{ i.order_status }}</td>
+					<td>{{ i.metadata }}</td>
+					<td>
+						<nuxt-link :to="`/admin/orders/${i.order_id}`"
+							>View &rarr;</nuxt-link
+						>
+					</td>
 				</tr>
 			</tbody>
 		</table>
-
 		<br /><br /><br />
 	</main>
 </template>
@@ -40,7 +49,7 @@ export default {
 	},
 	mounted() {
 		axios
-			.get('http://localhost:8000/admin/customers')
+			.get('http://localhost:8000/admin/orders')
 			.then((response) => {
 				this.res = response.data
 			})

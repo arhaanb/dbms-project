@@ -1,8 +1,19 @@
 <template>
-	<main>
-		<h1>search</h1>
+	<main class="container">
+		<h4>Search results for "{{ $route.query.q }}"</h4>
 
-		{{ results ? results : null }}
+		<div class="grid" v-if="results">
+			<nuxt-link
+				v-for="r in results"
+				:key="r.product_id"
+				class="card"
+				:to="`/product/${r.product_id}`"
+			>
+				<img :src="r.img" :alt="r.name" />
+				<h5 class="zero">{{ r.name }}</h5>
+				<p class="zero">{{ r.description }}</p>
+			</nuxt-link>
+		</div>
 	</main>
 </template>
 
@@ -27,3 +38,22 @@ export default {
 	}
 }
 </script>
+
+<style lang="scss" scoped>
+a {
+	color: #222;
+	text-decoration: none;
+	transition: 0.2s;
+	&:hover {
+		opacity: 0.6;
+	}
+	h5 {
+		font-weight: 500;
+	}
+}
+
+h4 {
+	font-weight: 700;
+	font-size: 3em;
+}
+</style>
