@@ -1,43 +1,37 @@
 <template>
 	<main class="container">
-		<div class="flex">
-			<h1>Products</h1>
-			<nuxt-link to="/admin/products/add">
-				<button>Add a Product</button>
-			</nuxt-link>
-		</div>
+		<h1>Orders</h1>
 
 		<table v-if="res">
 			<thead>
 				<tr>
 					<th>ID</th>
-					<th>Name</th>
-					<th>Supplier</th>
-					<th>Price</th>
+					<th>Customer</th>
+					<th>Address</th>
+					<th>Delivery Agent</th>
 					<th>Description</th>
-					<th>Quantity</th>
-					<th>Metadata</th>
-					<th>Edit</th>
+					<th>Status</th>
+					<th>Delivery</th>
+					<th>Details</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr v-for="i in res" :key="i">
-					<td>{{ i.product_id }}</td>
+					<td>{{ i.order_id }}</td>
 					<td>{{ i.name }}</td>
-					<td>{{ i.supplier_id }}</td>
-					<td>{{ i.price }}</td>
-					<td>{{ i.description }}</td>
-					<td>{{ i.quantity }}</td>
+					<td>{{ i.address }}</td>
+					<td>{{ i.delivery_agent_id }}</td>
+					<td>{{ i.delivery_agent_id }}</td>
+					<td>{{ i.order_status }}</td>
 					<td>{{ i.metadata }}</td>
 					<td>
-						<nuxt-link :to="`/admin/products/update?q=${i.product_id}`">
-							Edit &rarr;
-						</nuxt-link>
+						<nuxt-link :to="`/admin/orders/${i.order_id}`"
+							>View &rarr;</nuxt-link
+						>
 					</td>
 				</tr>
 			</tbody>
 		</table>
-
 		<br /><br /><br />
 	</main>
 </template>
@@ -54,7 +48,7 @@ export default {
 	},
 	mounted() {
 		axios
-			.get('http://localhost:8000/home')
+			.get('http://localhost:8000/admin/orders')
 			.then((response) => {
 				this.res = response.data
 			})
@@ -71,23 +65,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-.flex {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-
-.center {
-	text-align: center;
-}
-
-.grid {
-	display: grid;
-	grid-gap: 3em;
-	grid-template-columns: repeat(3, 1fr);
-}
-
+<style scoped>
 table {
 	width: 100%;
 	border-collapse: collapse;

@@ -1,0 +1,50 @@
+.zero {
+  margin: 0;
+}
+
+img, input {
+  width: 100%;
+}
+
+body, input, * {
+  font-family: satoshi;
+}
+
+button {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.9em;
+  line-height: normal;
+  background-color: #d55d0c;
+  border: none;
+  color: white;
+  transition: 0.2s;
+  margin: 0;
+  &:hover {
+    color: white;
+    opacity: 0.7;
+  }
+  &:active, &:focus {
+    color: white;
+  }
+}
+
+a {
+  text-decoration: none;
+  color: #d55d0c;
+  &:hover {
+    color: inherit;
+    opacity: 0.5;
+  }
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.strong {
+  font-weight: 500;
+}

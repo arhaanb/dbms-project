@@ -17,7 +17,6 @@
 					<th>Description</th>
 					<th>Quantity</th>
 					<th>Metadata</th>
-					<th>Edit</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -29,11 +28,6 @@
 					<td>{{ i.description }}</td>
 					<td>{{ i.quantity }}</td>
 					<td>{{ i.metadata }}</td>
-					<td>
-						<nuxt-link :to="`/admin/products/update?q=${i.product_id}`">
-							Edit &rarr;
-						</nuxt-link>
-					</td>
 				</tr>
 			</tbody>
 		</table>

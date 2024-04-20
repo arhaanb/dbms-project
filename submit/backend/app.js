@@ -417,21 +417,6 @@ app.post('/admin/updatestatus', (req, res) => {
 	)
 })
 
-app.post('/admin/updateproduct', (req, res) => {
-	const { id } = req.query
-	const { name, supplier, description, image, price, quantity, metadata } =
-		req.body
-
-	connection.query(
-		`update product set name = "${name}", supplier_id="${supplier}",price="${price}", description="${description}", quantity="${quantity}", metadata="${metadata}", img = "${image}" where product_id = ${id};`,
-		function (err, rows) {
-			if (err) throw err
-
-			res.json({ rows: 'bro' })
-		}
-	)
-})
-
 app.get('/admin/getorder', (req, res) => {
 	const { o } = req.query
 
