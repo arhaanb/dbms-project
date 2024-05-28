@@ -1,0 +1,230 @@
+question 3
+
+1. π album_name (σ Type='audio' ∧ YEAR(date)=2020 (Albums))
+
+2. π (c.*) (σ (e1.type = 'audio' AND e2.type = 'video') (Candidate ⨝ (Candidate_id = e1.candidate_id AND Candidate_id = e2.candidate_id) Entry as e1 ⨝ Entry as e2))
+
+
+
+
+
+
+
+
+
+
+
+3. π (first_name, middle_name, last_name) (σ (candidate_id IN (σ (selected_id IN (π (selected_id) (σ (COUNT(DISTINCT group_id) > 1) (GroupComprisesOf ⨝ Selected)))) Performance)) Candidate)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4. π (first_name, middle_name, last_name) 
+(σ (candidate_id IN (π (candidate_id) 
+
+(σ (performance_id IN (π (performance_id) 
+
+(σ (selected_id IN (π (selected_id) 
+
+
+(σ (selected_id IN (π (selected_id) 
+
+(σ (group_id IN (π (group_id) 
+
+(σ (genre = "pop") (MusicGroup))) 
+(GroupComprisesOf))) (Selected)) 
+(GroupComprisesOf))) (Selected)) 
+
+(Finalise))) (Performance))(Finalise))) 
+(Performance)) (Candidate)) AND candidate_id NOT IN 
+
+
+(π (candidate_id) (σ (performance_id IN (π (performance_id) 
+
+(σ (selected_id IN (π (selected_id) (σ (selected_id IN 
+(π (selected_id) (σ (group_id IN (π (group_id) 
+
+(σ (genre <> "pop") (MusicGroup))) (GroupComprisesOf))) 
+(Selected)) (GroupComprisesOf))) (Selected)) (Finalise))) 
+(Performance)) (Finalise))) (Performance))) (Candidate)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+5. π(distributor_id, distributor_name) (σ(COUNT(DISTINCT Type) = 2) (distributes ⨝ albums))
+
+question 4
+
+1. SELECT album_name
+FROM Albums
+WHERE Type = 'audio' AND YEAR(date) = 2020;
+
+2. select first_name, middle_name, last_name from candidate where candidate_id in (select candidate_id from performance where candidate_id in (
+SELECT s.selected_id
+FROM Selected s
+JOIN GroupComprisesOf gc ON s.selected_id = gc.selected_id
+GROUP BY s.selected_id
+HAVING COUNT(DISTINCT gc.group_id) > 1));
+
+3. select first_name, middle_name, last_name from candidate where candidate_id in (
+	select candidate_id from performance where performance_id in (
+		select performance_id from finalise where selected_id in (
+			select selected_id from selected where group_id in (
+				select group_id from groupcomprisesof where group_id in (
+					select group_id from musicgroup where genre = "pop"
+				)
+			)
+		)
+	)
+) 
+AND candidate_id not in (
+	select candidate_id from performance where performance_id in (
+		select performance_id from finalise where selected_id in (
+			select selected_id from selected where selected_id in (
+				select selected_id from groupcomprisesof where group_id in (
+					select group_id from musicgroup where genre <> "pop"
+				)
+			)
+		)
+	)
+);
+
+
+4. SELECT DISTINCT c.*
+FROM Candidate c
+JOIN Entry e1 ON c.candidate_id = e1.candidate_id
+JOIN Entry e2 ON c.candidate_id = e2.candidate_id
+WHERE e1.type = 'audio' AND e2.type = 'video';
+
+5. SELECT a.channel, COUNT(v.candidate_id) AS total_submissions
+FROM Advertisement a
+LEFT JOIN Views v ON a.advertisement_id = v.advertisement_id
+GROUP BY a.channel
+ORDER BY total_submissions DESC
+LIMIT 1;
+
+
+
+
+
+
+
+
+
+select first_name, middle_name, last_name from candidate where candidate_id in (select candidate_id from performance where performance_id in (select performance_id from finalise where selected_id in (select selected_id from selected where group_id in (select group_id from groupcomprisesof where group_id in (select group_id from musicgroup where genre = "pop")))));
+
+
+select selected_id from selected where group_id in (select group_id from groupcomprisesof where group_id in (select group_id from musicgroup where genre = "pop"));
+
+
+
+
+INSERT INTO GroupComprisesOf (group_id, selected_id)
+VALUES
+(5, 3);
+
+
+
+select first_name, middle_name, last_name from candidate where candidate_id in (
+	select candidate_id from performance where performance_id in (
+		select performance_id from finalise where selected_id in (
+			select selected_id from selected where group_id in (
+				select group_id from groupcomprisesof where group_id in (
+					select group_id from musicgroup where genre = "pop"
+				)
+			)
+		)
+	)
+) 
+AND candidate_id not in (
+	select candidate_id from performance where performance_id in (
+		select performance_id from finalise where selected_id in (
+			select selected_id from selected where selected_id in (
+				select selected_id from groupcomprisesof where group_id in (
+					select group_id from musicgroup where genre <> "pop"
+				)
+			)
+		)
+	)
+);
+
+
+select * from candidate where candidate_id in (
+	select candidate_id from performance where performance_id in (
+		select performance_id from finalise where selected_id in (
+			select selected_id from selected where selected_id in (
+				select selected_id from groupcomprisesof where group_id in (
+					select group_id from musicgroup where genre <> "pop"
+				)
+			)
+		)
+	)
+)
+
+
+
+
+select * from groupcomprisesof where group_id not in (
+					select group_id from musicgroup where genre = "pop"
+				)
+
+SELECT candidate_id FROM groupcomprisesof WHERE group_id NOT IN (SELECT group_id FROM musicgroup WHERE genre = 'Pop')
+
+
+
+select candidate_id from performance where performance_id in (select performance_id from finalise where selected_id in (select selected_id from selected where group_id in (select group_id from groupcomprisesof where group_id not in (select group_id from musicgroup where genre = "pop"))))
+
+
+
+
+
+
+
+

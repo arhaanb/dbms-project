@@ -1,0 +1,28 @@
+INSERT INTO Entry (entry_id, candidate_id, email, submission_date, prior_experience, type, file_url, outcome)
+VALUES
+(12, 1, 'ishir.bhardwaj@gmail.com', '2023-01-01', 'Experience 8', 'video', 'https://bit.ly/123', 'pending');
+
+
+select first_name, middle_name, last_name from candidate where candidate_id in (select candidate_id from performance where candidate_id in (
+SELECT s.selected_id
+FROM Selected s
+JOIN GroupComprisesOf gc ON s.selected_id = gc.selected_id
+GROUP BY s.selected_id
+HAVING COUNT(DISTINCT gc.group_id) > 1));
+
+
+select * from distributor where distributor_id in (
+SELECT distributor_id
+FROM distributes
+INNER JOIN albums ON distributes.album_id = albums.album_id
+GROUP BY distributor_id
+HAVING COUNT(DISTINCT Type) = 2);
+
+
+
+
+INSERT INTO Distributes (album_id, distributor_id, price)
+VALUES
+(4, 5, 20);
+
+
