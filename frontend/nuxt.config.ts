@@ -52,7 +52,7 @@ export default defineNuxtConfig({
 			]
 		}
 	},
-	devtools: { enabled: true },
+	devtools: { enabled: false },
 	modules: [],
 	css: ['~/assets/skeleton.css', '~/assets/main.scss']
 })

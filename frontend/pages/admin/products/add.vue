@@ -1,6 +1,6 @@
 <template>
 	<main class="container">
-		<h1>Products</h1>
+		<h1>Add Product</h1>
 
 		<form v-if="res" @submit.prevent="addproduct()">
 			<label for="">Name</label>
